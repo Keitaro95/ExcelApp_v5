@@ -37,3 +37,19 @@ def homepage():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+    # ファイルを一時時保存するパーツ
+
+file_dir = Path(r'data/')
+password = 'hogehoge'
+sheet_name = 'Sheet1'
+
+# 複数ファイル一個ずつ
+for file in file_dir.glob("*.xlsx"):
+    with file.open("rb") as f, tempfile.TemporaryFile() as tf:
+        office_file = msoffcrypto.OfficeFile(f)
+        office_file.load_key(password=password)
+        office_file.decrypt(tf) パスワード解除
+        df = pd.read_excel(tf, sheet_name=sheet_name)
+    df.to_csv('output/' + file.name.replace('', 'xlsx') + '.csv',index=False)
+

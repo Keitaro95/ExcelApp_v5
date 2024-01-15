@@ -36,7 +36,8 @@ def home():
     return render_template('index.html')
 
 
-# 一つのファイルを扱う # 多分,まずはdbに格納するのがいい
+# db保存用関数
+#index.htmlから/uploadにアクセスがありました
 @app.route('/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
@@ -53,19 +54,23 @@ def upload_file():
             japanese_filename = "".join([item['hepburn'] for item in kakasi.convert(file.filename)])
             filename = secure_filename(japanese_filename)
 
-            #upload用のフォルダに保存
+            #dbに保存
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             comment1 = 'ファイルが正常に保存されました'
             
             # return render_template('table.html', header=header, record=record)
-            return render_template('index.html', comment=comment1)
+            return render_template('index.html', comment=comment1) #index.htmlに返ります
         else:
             raise ValueError('ファイル形式がサポートされていません。')
-    return render_template('index.html') 
+    return render_template('upload.html') 
 
 
-@app.route('/table') # /tableがきたら処理
+# index.htmlから/tableにアクセスがありました
+# dbに保存したファイルをtable形式で表示します
+# 変更があれば上書きします
+@app.route('/table') 
 def table():
+    filepath = os.path.abspath(os.path.dirname) # dbから呼び出し
     file = request.files.get('file')
     filename = file.filename
     #pandasのdf形式にする
@@ -81,27 +86,13 @@ def table():
     return render_template('table.html')
 
 
-
+# index.htmlから/printにアクセスがありました
+# dbに保存のあるファイルをExcel形式で呼び出し,printの設定をします
 @app.route('/print', methods=['GET', 'POST'])
 def print():
     if request.method == 'POST':
         functions.excel_print()
     return render_template('index.html')
-
-# # ファイルを一時時保存するパーツ
-
-# file_dir = Path(r'data/')
-# password = 'hogehoge'
-# sheet_name = 'Sheet1'
-
-# # 複数ファイル一個ずつ
-# for file in file_dir.glob("*.xlsx"):
-#     with file.open("rb") as f, tempfile.TemporaryFile() as tf:
-#         office_file = msoffcrypto.OfficeFile(f)
-#         office_file.load_key(password=password)
-#         office_file.decrypt(tf) パスワード解除
-#         df = pd.read_excel(tf, sheet_name=sheet_name)
-#     df.to_csv('output/' + file.name.replace('', 'xlsx') + '.csv',index=False)
 
 
 def main():

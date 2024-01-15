@@ -2,13 +2,18 @@
 {% block content %}
 
   <h1>ファイルアップロード機能</h1>
-  <h2>ファイルアップロード機能はこちら</h2>
-
-  {{ comment1 }}
+  <h2  href="url_for('/upload')">ファイルアップロード機能はこちら</h2>
+  {% if  %}
+  {# comment1 upload.htmlでPOSTが成功したら表示 #} 
+  {% endif %}
 
   <p class="section">sec</p>
-  <h1 id="table">機能1.Jupyter表示/タブ並べ替え</h1>
+  <h1 id="table" href="url_for('/table)">アップしたファイルを表示します/タブ並べ替えはこちら</h1>
+  {% if %}
+  {# comment2 table.htmlでPOSTが成功したら表示 #}
+  {% endif %}
 
+  
   <p class="section">sec</p>
   <h1 id="concat">機能2.複数ファイルまとめる</h1>
   <form action="https://~" method="POST">
