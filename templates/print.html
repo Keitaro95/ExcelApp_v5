@@ -2,9 +2,39 @@
 {% block content %}
 
 
-<p>ここに、jQueryでカラムをタブ移動させる機能つける</p>
-<p>ユーザーが整列を完成したら、「実行ボタン」を押す。
-    するとjsで「この形式でよろしいですか？yes or no」と表示
-    yesなら整列後のファイルでindex.htmlに戻る
-</p>
+<h1>全てのシートに印刷設定を適用できるページです</h1>
+<form action={{ url_for('print') }} method="POST">
+    <div>
+        <h3>用紙サイズ設定</h3>
+        <label for="papersize">用紙サイズ: </label>
+        <select name="papersize">
+            <option value="">選択してください</option>
+            <option value="1">PAPERSIZE_LETTER</option>
+            <option value="2">PAPERSIZE_LETTER_SMALL</option>
+            <option value="3">PAPERSIZE_TABLOID</option>
+            <option value="4">PAPERSIZE_LEDGER</option>
+            <option value="5">PAPERSIZE_LEGAL</option>
+            <option value="6">PAPERSIZE_STATEMENT</option>
+            <option value="7">PAPERSIZE_EXECUTIVE</option>
+            <option value="8">PAPERSIZE_A3</option>
+            <option value="9">PAPERSIZE_A4</option>
+            <option value="10">PAPERSIZE_A4_SMALL</option>
+            <option value="11">PAPERSIZE_A5</option>
+        </select>
+    </div>
+    <div>
+        <h3>印刷方向</h3>
+        <input type="radio", name="orientation", value="portrait">縦向きに印刷<br>
+        <input type="radio", name="orientation", value="landscape">横向きに印刷
+    </div>
+    <h3>ページはみだしを無くします</h3>
+    <div>
+        <input type="radio", name="fitToWidth", value="1">列を1枚にまとめる(横列をページまたぎしません)<br>
+        <input type="radio", name="fitToHeight", value="1">行を1枚にまとめる(縦をページまたぎしません)
+    </div>
+    <br>
+    <div>
+        <input type="submit" value="送信">
+    </div>
+</form>
 {% endblock %}

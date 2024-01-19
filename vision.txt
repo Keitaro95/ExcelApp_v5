@@ -1,4 +1,9 @@
 
+ファイルはその時だけいじれればいいので
+tempfileを利用する
+ログアウト, ブラウザを閉じる で一時ファイルを削除する
+
+
 ## クラウドのデータ管理アプリ
 アクセスキーでsessionを開いて
 そのログイン法人アカウントのデータ整形,クレンジング機能
@@ -13,50 +18,22 @@
 
 
 
-
-顧客情報が全部入ったExcelファイルを持ってくる
-
-excelファイルをアップロード
-複数ファイルをアップロード
-(google colabotoryでやったようにいくつかのファイルをアップロードしてconcatする)
-
-pandasのdataframe形式で読み取る
+・excelファイルをアップロード
 
 
-
-ilocを使って
-列を削ぎ落とす/順番を帰る
-コラムの日付形式を変える
-列をタブにして
-タブをつまんで並べ変える（JavaScript?）
-
-(機能1,2,3はラジオボタンで選べる)
-
-機能1:{指定したコラム(列)}にある氏名でワークシート/ブック作る
-
-機能2:ワークシート/ブックに　氏名ごと　データを行ごと移植する
-
-その際、とってくる列の順番をチェックを入れブラウザで選択する　
+・pandasのdataframe形式で読み取ってtable表示
+jQueryでタブをつまんで列順を並べ変える/その際、とってくる列の順番をチェックを入れブラウザで選択する　
 0,1,2,3,4,
-
 氏名,日付,回数,教科1,教科2,教科3,・・・
+ilocを使って列を削ぎ落とす
 
-機能3(オプション):作成したシートを選択したカラムの降順/昇順　で整頓する
+・コラムの日付形式を変える
 
-機能4:作成したシートまたはブックをグラフにする
+アップロードしたファイル全てで
+・{指定したコラム(列)}にある氏名で{氏名}が{sheetname}のws
+または{氏名}で{filename}{sheetname}のbook作る
 
-その際、グラフの色
-
-印刷設定
-def print():
-    import openpyxl
+・氏名スキャンしてws名が{氏名}/book名が{氏名} のものに重複なしでデータを行ごと移植する
 
 
-wb = openpyxl.load_workbook('sample.xlsx')
-
-for ws in wb.worksheets:
-    ws.page_setup.orientation = "portrait"
-    ws.page_setup.fitToWidth = 1  # 横1ページ
-    ws.page_setup.fitToHeight = 0  # 縦は指定なし
-    ws.sheet_properties.pageSetUpPr.fitToPage = True
-wb.save('print.xlsx')
+・印刷設定
