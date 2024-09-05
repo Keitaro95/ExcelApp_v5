@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Excel Freedom</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+
+    <body>
+        <!-- navbar -->
+        <nav>
+            <div class="nav-container">
+                <ul class="globalnav">
+                    {% if current_user.is_authenticated %}
+                    <li><a href="#">こんにちは, {{ current_user.username|safe }}</a></li>
+                    <li><a href="javascript:void(0);" onclick="window.history.back();">前のページに戻る</a></li>
+                    <li><a href="{{ url_for('app.index') }}">アプリホーム</a></li>
+                    <li><a href="{{ url_for('app.user') }}">ユーザ情報</a></li>
+                    <li><a href="{{ url_for('app.logout') }}">ログアウト</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </nav>
+        {% block content %}
+
+        {% endblock %}
+    </body>
+
+</html>
