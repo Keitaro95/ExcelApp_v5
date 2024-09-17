@@ -5,11 +5,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+from google_auth_oauthlib.flow import Flow
+import pathlib
 
-
-#環境変数の設定
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 
 login_manager = LoginManager() # インスタンスを生成
 login_manager.login_view = 'app.google_login' #ログイン時の遷移先app(つまりbp)のlogin関数に遷移するように設定
@@ -37,10 +35,22 @@ migrate = Migrate()
 
 #google認証情報
 google_blueprint = make_google_blueprint(
-    client_id="10276624078-4f2jjf0hpm8cvhr53mb9ksj5lnmk2hll.apps.googleusercontent.com",
-    client_secret="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",
+    client_id=os.getenv("GOOGLE_CLIENT_ID"),
+    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
     scope=["profile", "email"],
     redirect_to='app.google_login',
+)
+
+client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
+
+flow = Flow.from_client_secrets_file(
+    client_secrets_file=client_secrets_file,
+    scopes=[
+    'openid',
+    'https://www.googleapis.com/auth/userinfo.profile',
+    'https://www.googleapis.com/auth/userinfo.email'
+    ],
+    redirect_uri='http://127.0.0.1:5000/callback' # OIDCからresponseが返ってくる。その送り先のurl(def callback())
 )
 
 config = {
@@ -57,10 +67,10 @@ def create_app():
     config_file = config[os.getenv('ENVIRONMENT', 'development')]
     app.config.from_pyfile(config_file)
     from excelapp.views import bp
-    app.register_blueprint(bp) #アプリケーションのblueprintを登録
-    db.init_app(app) #dbをイニシャライズ
-    migrate.init_app(app, db) #migrationをイニシャライズ
-    login_manager.init_app(app) #login_managerをイニシャライズ
+    app.register_blueprint(bp)
+    db.init_app(app)
+    migrate.init_app(app, db)
+    login_manager.init_app(app)
 
     # scheduler.init_app(app)
     # scheduler.start()

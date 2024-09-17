@@ -1,4 +1,3 @@
-# OAuthを使ってgoogleで認証する
 from excelapp import db, login_manager
 from flask_bcrypt import generate_password_hash, check_password_hash
 from flask_login import UserMixin
@@ -12,7 +11,7 @@ class PrintInfo:
         self.fitToWidth = fitToWidth
         self.fitToHeight = fitToHeight
 
-@login_manager.user_loader #ユーザがログインしてたら働く関数
+@login_manager.user_loader
 def load_user(user_id):
     return User.query.get(user_id)
 
@@ -23,10 +22,7 @@ class User(UserMixin, db.Model):
     email = db.Column(db.String(64), index=True, unique=True, nullable=False)
     username = db.Column(db.String(64))
     password = db.Column(db.String(128))
-    #紐付けに使うのは両者にない固有の変数でok
     filedatas = db.relationship('Asset', backref='user', lazy=True)
-    # これだとfiladataはまだないから参照不可能
-    # filedata = db.relationship('Filedata', backref="users", lazy='dynamic')
     
     def __init__(self, email, username=None, password=None):
         self.email = email
@@ -62,7 +58,6 @@ class Asset(db.Model):
     uploadtime = db.Column(db.DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, asset_name, asset_path, user_id):
-        # file_idはautoなので書かなくてよし
         self.asset_name = asset_name
         self.asset_path = asset_path
         self.user_id = user_id
@@ -83,7 +78,6 @@ class Asset(db.Model):
     def asset_by_fileid(cls, file_id):
         return cls.query.filter(cls.file_id==file_id).first()
 
-    # file_idかつuser_idで一意に選択
     @classmethod
     def get_one_asset(cls, file_id, user_id):
         return cls.query.filter(cls.file_id==file_id, cls.user_id==user_id).first()
