@@ -11,7 +11,7 @@ import pathlib
 
 login_manager = LoginManager()
 login_manager.login_view = 'app.google_login'
-login_manager.login_message ='ログインしてください'
+# login_manager.login_message = 'ログインしてください'
 
 # インスタンスを生成
 
