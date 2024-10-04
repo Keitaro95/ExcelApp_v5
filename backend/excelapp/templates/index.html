@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block content %}
+
+      <div class="grid-container">
+
+        <section class="preview">
+          <h1>ファイルボックス</h1>
+            <ul>
+            {% for asset in assets %}
+                <li>
+                    {{ asset.asset_name }} | <a href="{{ url_for('app.preview', fileid=asset.file_id) }}">プレビュー</a>|<a href="{{ url_for('app.download', fileid=asset.file_id) }}">ダウンロード</a>|<a href="{{ url_for('app.delete', fileid=asset.file_id) }}">削除</a>
+                </li>
+            {% endfor %}
+            </ul>
+            <!-- Flash メッセージの表示エリア -->
+          {% with messages = get_flashed_messages(category_filter=["success_delete"]) %}
+          {% if messages %}
+              {% for message in messages %}
+              <div class="alert alert-success">
+                  {{ message }}
+              </div>
+              {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </section>
+        
+        <section class="upload">
+          <h1>ファイルアップロード</h1>
+          <p>※形式は'xlsx', 'xls', 'csv'が対応しています。<br>
+          ※アップロードは一件のみです
+          </p>
+          <form action="{{ url_for('app.upload')}}" id="upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".xls, .xlsx, .xlsm, .csv">
+            <input type="submit" value="アップロード">
+          </form>
+          <!-- success_uploadカテゴリのFlashメッセージのみ表示 -->
+          {% with messages = get_flashed_messages(category_filter=["success_upload"]) %}
+          {% if messages %}
+              {% for message in messages %}
+              <div class="alert alert-success">
+                  {{ message }}
+              </div>
+              {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </section>
+
+        
+        <section class="sheetbyname">
+          <h2>シート作成</h2>
+          {% for asset in assets %}
+          <form method="POST" action="{{ url_for('app.sheet', fileid=asset.file_id) }}">
+            <ul>
+              <li>
+                <label>
+                  <input type="radio" name="selected_file" value="{{ asset.file_id }}">
+                  ファイル名: {{ asset.asset_name }}
+                </label>
+              </li>
+            </ul>
+            <input type="submit" value="選択したファイルのシートを作成">
+          </form>
+          {% endfor %}
+          <!-- Flash メッセージの表示エリア -->
+          {% with messages = get_flashed_messages(category_filter=["success_sheet"]) %}
+          {% if messages %}
+              {% for message in messages %}
+              <div class="alert alert-success">
+                  {{ message }}
+              </div>
+              {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </section>
+
+        <section class="copyrow">
+          <h1>シート転記</h1>
+          <p>チェックは一件のみです。※姓名の間は半角スペース</p>
+          {% for asset in assets %}
+          <form method="POST" action="{{ url_for('app.copy', fileid=asset.file_id) }}">
+            <ul>
+              <li>
+                <label>
+                  <input type="radio" name="selected_file" value="{{ asset.file_id }}">
+                  ファイル名: {{ asset.asset_name }}
+                </label>
+              </li>
+            </ul>
+            <input type="submit" value="選択したファイルのシートにコピー">
+          </form>
+          {% endfor %}
+          <!-- Flash メッセージの表示エリア -->
+          {% with messages = get_flashed_messages(category_filter=["success_copyrow"]) %}
+          {% if messages %}
+              {% for message in messages %}
+              <div class="alert alert-success">
+                  {{ message }}
+              </div>
+              {% endfor %}
+          {% endif %}
+          {% endwith %}
+        </section>
+      </div>
+
+{% endblock %}

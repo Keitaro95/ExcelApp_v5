@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+
+<p>本当に退会しますか？</p>
+
+<form action="{{ url_for('app.user_delete') }}" method="post">
+    <button type="submit">退会</button>
+</form>
+
+{% endblock %}

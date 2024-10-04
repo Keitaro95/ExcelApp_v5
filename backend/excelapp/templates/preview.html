@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="tab-container">
+    <ul class="tab-menu">
+        {% for sheet in sheets_data %}
+        <li><a href="#tab{{ loop.index }}" {% if loop.first %}class="active" {% endif %}>{{ sheet.sheet_name }}</a></li>
+        {% endfor %}
+    </ul>
+
+    {% for sheet in sheets_data %}
+    <div id="tab{{ loop.index }}" class="tab-content {% if loop.first %}active{% endif %}">
+        <div class="tab__panel">
+            <div class="tab__panel-box tab__panel-box001 is-show" data-panel="{{ sheet.sheet_name }}">
+                <p class="tab__panel-text">
+                <table>
+                    <thead>
+                        <tr>
+                            {% for column in sheet.header %}
+                            <th>{{ column }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in sheet.record %}
+                        <tr>
+                            {% for cell in row %}
+                            <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                </p>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- スクリプトを読み込む -->
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+
+<!-- デバッグ用の情報を表示 -->
+<div style="background-color: #f0f0f0; padding: 10px; margin-top: 20px;">
+    <h3>デバッグ情報:</h3>
+    <pre>
+      {% for sheet in sheets_data %}
+      シート名: {{ sheet.sheet_name }}
+      ヘッダー: {{ sheet.header }}
+      レコード数: {{ sheet.record|length }}
+      {% endfor %}
+    </pre>
+</div>
+
+{% endblock %}
+
