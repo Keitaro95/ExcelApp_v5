@@ -1,3 +1,4 @@
+# coding: UTF-8
 import os, datetime, logging
 import logging.config
 from flask_dance.contrib.google import make_google_blueprint
@@ -12,7 +13,6 @@ import pathlib
 login_manager = LoginManager()
 login_manager.login_view = 'app.google_login'
 # login_manager.login_message = 'ログインしてください'
-
 # インスタンスを生成
 
 db = SQLAlchemy()

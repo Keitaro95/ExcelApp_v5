@@ -1,1 +1,0 @@
-0 4 * * * source ~/venv_private_diary/bin/activate; cd ~/venv_private_diary/private_diary; python manage.py backup_diary > ~/cron.log 2>&1

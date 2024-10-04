@@ -1,6 +1,0 @@
-__pycache__/
-backend/__pycache__/
-backend/excelapp/__pycache__/
-*.pyc
-*.cfg
-*.db
