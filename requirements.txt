@@ -10,7 +10,7 @@ flask-bcrypt==0.7.1
 email-validator==1.1.1
 google-auth-oauthlib==0.4.1
 Werkzeug==1.0.1
-SQLAlchemy==2.0.35
+SQLAlchemy==1.4.54
 gunicorn==23.0.0
 
 
