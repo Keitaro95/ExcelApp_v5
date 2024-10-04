@@ -9,14 +9,21 @@ from google_auth_oauthlib.flow import Flow
 import pathlib
 
 
-login_manager = LoginManager() # インスタンスを生成
-login_manager.login_view = 'app.google_login' #ログイン時の遷移先app(つまりbp)のlogin関数に遷移するように設定
+login_manager = LoginManager()
+login_manager.login_view = 'app.google_login'
 login_manager.login_message ='ログインしてください'
 
 # インスタンスを生成
-basedir = os.path.abspath(os.path.dirname(__name__))
+
 db = SQLAlchemy()
 migrate = Migrate()
+
+basedir = os.path.abspath(os.path.dirname(__name__))
+database_path = os.path.join(basedir, 'data.sqlite')
+SQLALCHEMY_DATABASE_URI=f'sqlite:///{database_path}'
+SQLALCHEMY_TRACK_MODIFICATIONS=False
+
+
 
 # #app scheduler
 # @scheduler.task('interval', id='delete_expired_files', minutes=30)
@@ -33,37 +40,16 @@ migrate = Migrate()
 #         except Exception as e:
 #             print(f"Error deleting file {expired_asset.asset_path}: {e}")
 
-#google認証情報
-google_blueprint = make_google_blueprint(
-    client_id=os.getenv("GOOGLE_CLIENT_ID"),
-    client_secret=os.getenv("GOOGLE_CLIENT_SECRET"),
-    scope=["profile", "email"],
-    redirect_to='app.google_login',
-)
 
 client_secrets_file = os.path.join(pathlib.Path(__file__).parent, "client_secret.json")
-
-flow = Flow.from_client_secrets_file(
-    client_secrets_file=client_secrets_file,
-    scopes=[
-    'openid',
-    'https://www.googleapis.com/auth/userinfo.profile',
-    'https://www.googleapis.com/auth/userinfo.email'
-    ],
-    redirect_uri='http://127.0.0.1:5000/callback' # OIDCからresponseが返ってくる。その送り先のurl(def callback())
-)
 
 config = {
     'development': 'config/development/settings.cfg',
     'production': 'config/production/settings.cfg',
 }
 
-
-
-# アプリケーションの設定
 def create_app():
     app = Flask(__name__)
-    app.register_blueprint(google_blueprint, url_prefix='/login') #ドキュメントのままでok
     config_file = config[os.getenv('ENVIRONMENT', 'development')]
     app.config.from_pyfile(config_file)
     from excelapp.views import bp

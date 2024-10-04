@@ -17,7 +17,7 @@ import pandas as pd
 from uuid import uuid4
 import tempfile, chardet, os, openpyxl, pykakasi, requests, os, google
 
-from excelapp import google_blueprint, basedir, db, flow
+from excelapp import basedir, db
 from excelapp.models import User, Asset, PrintInfo
 from excelapp.forms import LoginForm, RegisterForm
 from excelapp.functions import sheetbyname, copyrowdata, excel_print
@@ -58,9 +58,14 @@ def login():
             flash('メールアドレスまたはパスワードが正しくありません。', 'error')
     return render_template('login.html', form=form)
 
-CLIENT_SECRET_FILE = 'excelfreedom/client_secret.json'
-SCOPES = ['openid', 'profile', 'email']
+CLIENT_SECRET_FILE = 'backend/excelapp/client_secret.json'
+SCOPES = [
+    'openid',
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile'
+]
 ALLOWED_EXTENSIONS = {'xlsx', 'xls', 'csv'}
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 from google_auth_oauthlib.flow import Flow
 import google.oauth2.credentials
@@ -92,8 +97,8 @@ def oauth2callback():
         state=state
     )
     flow.redirect_uri = url_for('app.oauth2callback', _external=True)
+    print(f"Authorization response: {request.url}")  # デバッグ用のログ
     flow.fetch_token(authorization_response=request.url)
-
     credentials = flow.credentials
     session['credentials'] = {
         'token': credentials.token,
@@ -108,12 +113,15 @@ def oauth2callback():
     id_info = id_token.verify_oauth2_token(
         id_token=credentials.id_token,
         request=token_request,
-        audience=os.getenv['GOOGLE_CLIENT_ID']
+        audience=os.getenv('GOOGLE_CLIENT_ID')
     )
     email = id_info['email']
     user = User.select_by_email(email)
     if not user:
-        user = User(email=email)
+        user = User(
+            email=email,
+            username=extract_username(email)
+        )
         user.add_user()
     login_user(user, remember=True)
     return redirect(url_for('app.index'))
